@@ -126,4 +126,4 @@ def initdb():
     db.create_all()
 
 if __name__ == '__main__':
-    app.run(debug=True, port=os.environ.get('PORT', 8000))
+    app.run(debug=True, port=int(os.environ.get('PORT', 8000)))
