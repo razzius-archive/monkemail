@@ -136,13 +136,17 @@
             var content = document.getElementById('monkemail_message').value;
 
             var payload = {
+                from_email: from_email,
+                content: content,
+                website_url: window.location.host
+            };
 
-            }
             var request = new XMLHttpRequest();
             request.open('POST', 'http://api.monkemail.me/contact/', true);
             request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            request.send(JSON.stringify(payload));
-        }
+            var resp = request.send(JSON.stringify(payload));
+            clearPopup();
+        };
 
         var showPopup = function() {
             var overlay = document.createElement('div');

@@ -10,7 +10,7 @@ RUN apt-get install -y python python-dev python-distribute python-pip
 
 RUN apt-get install -y libtinfo-dev libncurses5-dev libpq-dev
 
-RUN v=0.4.1 git clone https://github.com/razzius/monkemail.git
+RUN v=0.5.1 git clone https://github.com/razzius/monkemail.git
 
 # Add environment variables
 
