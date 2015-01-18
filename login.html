@@ -74,6 +74,7 @@
             url = url + 'email=' + $.cookie('email');
             url = url + '&github_api_token=' + $.cookie('github_api_token');
             $.getJSON(url, function(data) {
+                $('#sites').append('<p>hi</p>');
                 debugger;
             });
         }
