@@ -1,12 +1,12 @@
 .. Monkemail documentation master file
 
-Welcome to Monkemail's documentation!
-=====================================
+.. Welcome to Monkemail's documentation!
+.. =====================================
 
-Contents:
+.. Contents:
 
-.. toctree::
-   :maxdepth: 2
+.. .. toctree::
+..    :maxdepth: 2
 
 
 
@@ -22,4 +22,13 @@ Monkemail quickstart
 
 .. note::
 
-    Have fun
+    WORK IN PROGRESS
+
+
+To use Monkemail, include the monkemail library on your site:
+
+    <script src="http://monkemail.com/assets/lib.js"></script>
+
+Then to enable the email popup on a specific element, give it the ID ``monkemail_popup``:
+
+    <a href="#" id="monkemail_popup">Contact Us</a>
