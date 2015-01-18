@@ -134,9 +134,15 @@ def send_contact():
         'message': 'success'
     })
 
-@app.route('/websites/', methods=['POST'])
-def create_website():
+@app.route('/websites/', methods=['GET', 'POST'])
+def websites():
     """Create a website for integrating monkemail."""
+    if request.method == 'POST':
+        return create_website(request)
+    else:
+        return get_websites(request)
+
+def create_website(request):
     request_data = request.get_json()
     user_email = request_data.get('email', None)
     user_github_token = request_data.get('github_api_token', None)
@@ -168,7 +174,6 @@ def create_website():
         print(e)
         return 'Already created', 400
 
-@app.route('/websites/', methods=['GET'])
 def get_websites():
     """Return a user's registered websites."""
     user_email = request.args.get('email', None)
