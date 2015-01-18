@@ -1,5 +1,6 @@
 import os
 import urlparse
+import urllib
 
 from flask import Flask, make_response, redirect, request
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -24,8 +25,6 @@ GITHUB_OAUTH_ENDPOINT = 'https://github.com/login/oauth/access_token'
 
 app = Flask('Monkemail')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-app.config['SERVER_NAME'] = 'monkemail.me'
-app.config['SESSION_COOKIE_DOMAIN'] = '.monkemail.me'
 
 
 ### Database Bizness ###
@@ -113,16 +112,13 @@ def oauth():
         # They're already in the database
         pass
 
-    redirect_url = 'http://monkemail.me/login'
+    session_data = {
+        'github_api_token': token,
+        'user_email': user_email
+    }
+    redirect_url = 'http://monkemail.me/login?{}'.format(urllib.urlencode(session_data))
 
-    response = make_response(redirect(redirect_url))
-
-    # Cookies don't work cross-domain
-    response.set_cookie('github_api_token', token)
-    response.set_cookie('user_email', user_email)
-
-    return response
-
+    return redirect(redirect_url)
 
 @app.cli.command()
 def initdb():
