@@ -12,7 +12,7 @@ var BASE_OAUTH_URL = 'https://github.com/login/oauth/authorize?';
 
 var get_parameters = {
     client_id: '72e93ca6dc8ad6c3fb67',
-    redirect_uri: 'http://monke.ngrok.com/oauth',
+    redirect_uri: 'http://api.monkemail.me/oauth',
     scope: 'user:email',
     state: Math.random().toString(36).substring(7)
 };
