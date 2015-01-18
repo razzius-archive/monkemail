@@ -25,6 +25,7 @@ GITHUB_OAUTH_ENDPOINT = 'https://github.com/login/oauth/access_token'
 app = Flask('Monkemail')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SERVER_NAME'] = 'monkemail.me'
+app.config['SESSION_COOKIE_DOMAIN'] = '.monkemail.me'
 
 
 ### Database Bizness ###
@@ -128,4 +129,4 @@ def initdb():
     db.create_all()
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', debug=True, port=5000)
+    app.run('0.0.0.0', debug=True, port=int(os.environ.get('PORT', 5000)))
