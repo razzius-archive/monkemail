@@ -2,7 +2,7 @@ import os
 import urlparse
 import urllib
 
-from flask import Flask, abort, jsonify, redirect, request
+from flask import Flask, jsonify, redirect, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
@@ -89,10 +89,50 @@ def get_primary_github_email(github_client):
     # Return the first email if none are primary
     return user_emails[0]['email']
 
+def send_email(to_email, from_email, content):
+    message = {
+        'from_email': from_email,
+        'to': [{'email': to_email}],
+        'html': content
+    }
+    mandrill_client.messages.send(message)
+
 @app.route('/')
 def test():
     """Endpoint to see if the service is working."""
     return 'success'
+
+@app.route('/contact/', methods=['POST'])
+def send_contact():
+    request_data = request.get_json()
+    user_email = request_data.get('email', None)
+    user_github_token = request_data.get('github_api_token', None)
+    if not user_email or not user_github_token:
+        return 'Need to pass email and github_api_token', 403
+
+    try:
+        user = db.session.query(User).filter_by(email=user_email).one()
+    except NoResultFound:
+        return 'User not found', 404
+
+    if user.github_api_token != user_github_token:
+        return 'Authentication data did not match', 403
+
+    content = request_data['content']
+    from_email = request_data['from_email']
+    website_url = request_data['website_url']
+
+    website = db.session.query(Website).filter_by(url=website_url).first()
+    if not website:
+        return 'Website not found', 404
+
+    send_email(website.contact_email,
+               from_email,
+               content)
+
+    return jsonify({
+        'message': 'success'
+    })
 
 @app.route('/websites/', methods=['POST'])
 def create_website():
