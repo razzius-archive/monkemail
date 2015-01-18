@@ -18,6 +18,6 @@ WORKDIR monkemail
 
 RUN pip install -r requirements.txt
 
-EXPOSE 8000
+EXPOSE 5000
 
 CMD ["python", "server.py"]
