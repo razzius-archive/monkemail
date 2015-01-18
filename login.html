@@ -36,7 +36,9 @@
         #submit:hover {
             background-color: #eee;
         }
-
+        #sites {
+            font-size: 24px;
+        }
         #message {
 
         }
@@ -74,9 +76,12 @@
             var url = 'http://api.monkemail.me/websites/?';
             url = url + 'email=' + $.cookie('email');
             url = url + '&github_api_token=' + $.cookie('github_api_token');
-            $.getJSON(url, function(data) {
-                $('#sites').append('<p>hi</p>');
-                debugger;
+            $.getJSON(url, function(json) {
+                json.data.forEach(function(website) {
+                    var html = '<a href=' + website.url + '>' + website.url + '</a> - ' + website.contact_email + '<br>';
+                    $('#sites').append(html);
+
+                });
             });
         }
         $(function() {

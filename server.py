@@ -105,19 +105,6 @@ def test():
 @app.route('/contact/', methods=['POST'])
 def send_contact():
     request_data = request.get_json()
-    user_email = request_data.get('email', None)
-    user_github_token = request_data.get('github_api_token', None)
-    if not user_email or not user_github_token:
-        return 'Need to pass email and github_api_token', 403
-
-    try:
-        user = db.session.query(User).filter_by(email=user_email).one()
-    except NoResultFound:
-        return 'User not found', 404
-
-    if user.github_api_token != user_github_token:
-        return 'Authentication data did not match', 403
-
     content = request_data['content']
     from_email = request_data['from_email']
     website_url = request_data['website_url']

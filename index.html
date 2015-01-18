@@ -130,6 +130,20 @@
             popup.parentNode.removeChild(popup);
         };
 
+        var send_email = function() {
+
+            var from_email = document.getElementById('monkemail_email_input').value;
+            var content = document.getElementById('monkemail_message').value;
+
+            var payload = {
+
+            }
+            var request = new XMLHttpRequest();
+            request.open('POST', 'http://api.monkemail.me/contact/', true);
+            request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            request.send(JSON.stringify(payload));
+        }
+
         var showPopup = function() {
             var overlay = document.createElement('div');
             overlay.id = 'monkemail_overlay';
@@ -156,8 +170,9 @@
             body.appendChild(popup);
             var close_button = document.getElementById('monkemail_close_button');
             close_button.addEventListener('click', clearPopup);
-
             overlay.addEventListener('click', clearPopup);
+            var submit = document.getElementById('monkemail_submit');
+            submit.addEventListener('click', send_email);
         };
 
         document.getElementById('monkemail_contact').addEventListener('click', showPopup);
