@@ -161,7 +161,7 @@ def create_website(request):
         print(e)
         return 'Already created', 400
 
-def get_websites():
+def get_websites(request):
     """Return a user's registered websites."""
     user_email = request.args.get('email', None)
     user_github_token = request.args.get('github_api_token', None)
