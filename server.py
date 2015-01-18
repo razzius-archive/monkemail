@@ -64,7 +64,7 @@ class User(db.Model, BaseMixin):
 
 class Website(db.Model, BaseMixin):
     """Represents a website that a user owns which can be integrated with Monkemail."""
-    contact_email = Column(String(120), unique=True)
+    contact_email = Column(String(120))
     url = Column(String(255))
     owner_id = Column(Integer, ForeignKey('user.id'), index=True)
     owner = relationship('User', foreign_keys=[owner_id])
@@ -164,7 +164,8 @@ def create_website():
     try:
         db.session.commit()
         return jsonify(website.to_json())
-    except IntegrityError:
+    except IntegrityError as e:
+        print(e)
         return 'Already created', 400
 
 @app.route('/websites/', methods=['GET'])

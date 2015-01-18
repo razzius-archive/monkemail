@@ -37,6 +37,9 @@
             background-color: #eee;
         }
 
+        #message {
+
+        }
     </style>
 
 </head>
@@ -49,7 +52,7 @@
             <div id="sites"></div>
             <input id="new_website">
             <input id="submit" value="Add new site" type="submit">
-
+            <h3 id="message"></h3>
         </div>
     </div>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
@@ -65,17 +68,26 @@
                 }
             }
         }
+
+        function loadWebsites() {
+            var url = 'http://api.monkemail.me/websites/?';
+            url = url + 'email=' + $.cookie('email');
+            url = url + '&github_api_token=' + $.cookie('github_api_token');
+            $.getJSON(url, function(data) {
+                debugger;
+            });
+        }
         $(function() {
             var email = getURLParameter('email');
             $.cookie('email', email);
             var token = getURLParameter('github_api_token');
             $.cookie('github_api_token', token);
+            loadWebsites();
         });
 
         $('#submit').click(function() {
             var site_to_add = $('#new_website').val();
-            var API = 'http://localhost:5000/websites/';
-            // var API = 'http://api.monkemail.me/websites/'
+            var API = 'http://api.monkemail.me/websites/';
             $.ajax({
                 url: API,
                 contentType: 'application/json',
@@ -86,7 +98,7 @@
                     url: site_to_add
                 })
             }).done(function(data) {
-                debugger
+                $('#message').html(data);
             });
         });
     </script>
