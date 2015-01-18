@@ -9,7 +9,7 @@ body {
     position: relative;
 }
 #content {
-    padding-bottom:40px;
+    padding-bottom: 40px;
 }
 #footer {
     width:100%;
@@ -24,7 +24,7 @@ body {
 
     background-size: 100%;
     background-repeat: no-repeat;
-    height: 500px;
+    height: 450px;
 
 }
 
