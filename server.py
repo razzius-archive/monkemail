@@ -24,7 +24,7 @@ GITHUB_OAUTH_ENDPOINT = 'https://github.com/login/oauth/access_token'
 
 app = Flask('Monkemail')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-
+app.config['SERVER_NAME'] = 'monkemail.me'
 
 
 ### Database Bizness ###
@@ -115,6 +115,8 @@ def oauth():
     redirect_url = 'http://monkemail.me/login'
 
     response = make_response(redirect(redirect_url))
+
+    # Cookies don't work cross-domain
     response.set_cookie('github_api_token', token)
     response.set_cookie('user_email', user_email)
 
@@ -126,4 +128,4 @@ def initdb():
     db.create_all()
 
 if __name__ == '__main__':
-    app.run('0.0.0.0')
+    app.run('0.0.0.0', debug=True, port=8000)
