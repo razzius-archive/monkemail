@@ -1,5 +1,7 @@
 Monkemail is an email plugin for websites.
 
+<img src="https://readthedocs.org/projects/monkemail/badge/?version=latest">
+
 [Demo](http://monkemail.me)
 
 Tired of `mailto` links? Want a good user experience for your contact page? Then use Monkemail!
