@@ -11,9 +11,12 @@ from sqlalchemy.orm import relationship
 
 import requests
 from github import Github
+from mandrill import Mandrill
 
 
 MANDRILL_API_KEY = os.environ.get('MANDRILL_API_KEY')
+mandrill_client = Mandrill(MANDRILL_API_KEY)
+
 GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID')
 GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET')
 
@@ -67,6 +70,11 @@ def get_primary_github_email(github_client):
 
     # Return the first email if none are primary
     return user_emails[0]['email']
+
+@app.route('/')
+def test():
+    """Endpoint to see if the service is working."""
+    return 'success'
 
 @app.route('/oauth')
 def oauth():
