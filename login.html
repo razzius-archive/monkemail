@@ -2,10 +2,61 @@
 <html>
 <head>
     <title>login</title>
+    <link href='http://fonts.googleapis.com/css?family=EB+Garamond' rel='stylesheet' type='text/css'>
+    <style type="text/css">
+        html,
+        body {
+            height:100%;
+            font-family: 'EB Garamond', serif;
+            text-align: center;
+        }
+
+        #postman {
+            background: linear-gradient(to bottom,  rgba(255,255,255,0) 0%,rgba(255,255,255,.4) 50%,rgba(255,255,255,.92) 85%,rgba(255,255,255,1) 100%), url('assets/postman.png');
+
+            background-size: 100%;
+            background-repeat: no-repeat;
+            height: 350px;
+
+        }
+        input {
+            font-size: 18px;
+            outline: none;
+            padding: 5px;
+        }
+        #submit {
+            background-color: white;
+            cursor: pointer;
+            height: 30px;
+            border: 1px solid gray;
+            margin: 5px;
+            padding: 5px;
+            font-size: 18px;
+        }
+        #submit:hover {
+            background-color: #eee;
+        }
+
+    </style>
+
 </head>
 <body>
-cookies?
+    <div id="wrapper">
+        <div id="content">
+            <h1>Welcome to Monkemail</h1>
+            <div id="postman"></div>
+            <h2>Your Sites</h2>
+            <div id="sites"></div>
+            <form>
+                <input id="new_website">
+                <input id="submit" value="Add new site" type="submit">
 
-Authorize mailchimp now plz
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        console.log('put args in cookies');
+        debugger;
+    </script>
 </body>
 </html>

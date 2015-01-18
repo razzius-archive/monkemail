@@ -2,13 +2,15 @@ import os
 import urlparse
 import urllib
 
-from flask import Flask, make_response, redirect, request
+from flask import Flask, abort, jsonify, redirect, request
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm.exc import NoResultFound
 
 import requests
 from github import Github
@@ -25,6 +27,8 @@ GITHUB_OAUTH_ENDPOINT = 'https://github.com/login/oauth/access_token'
 
 app = Flask('Monkemail')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+
+cors = CORS(app)
 
 
 ### Database Bizness ###
@@ -50,6 +54,12 @@ class User(db.Model, BaseMixin):
         self.email = email
         self.github_api_token = github_api_token
 
+    def to_json(self):
+        return {
+            'id': self.id,
+            'email': self.email
+        }
+
 
 
 class Website(db.Model, BaseMixin):
@@ -58,6 +68,14 @@ class Website(db.Model, BaseMixin):
     url = Column(String(255))
     owner_id = Column(Integer, ForeignKey('user.id'), index=True)
     owner = relationship('User', foreign_keys=[owner_id])
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'url': self.url,
+            'owner': self.owner.to_json(),
+            'contact_email': self.contact_email
+        }
 
 
 def get_primary_github_email(github_client):
@@ -75,6 +93,64 @@ def get_primary_github_email(github_client):
 def test():
     """Endpoint to see if the service is working."""
     return 'success'
+
+@app.route('/websites/', methods=['POST'])
+def create_website():
+    """Create a website for integrating monkemail."""
+    request_data = request.get_json()
+    user_email = request_data.get('email', None)
+    user_github_token = request_data.get('github_api_token', None)
+    if not user_email or not user_github_token:
+        return 'Need to pass email and github_api_token', 403
+
+    try:
+        user = db.session.query(User).filter_by(email=user_email).one()
+    except NoResultFound:
+        return 'User not found', 404
+
+    if user.github_api_token != user_github_token:
+        return 'Authentication data did not match', 403
+
+    website_url = request_data.get('url', None)
+    if not website_url:
+        return 'Need to specify website url', 400
+
+    website = Website(
+        contact_email=user.email,
+        owner_id=user.id,
+        url=website_url
+    )
+    db.session.add(website)
+    try:
+        db.session.commit()
+        return jsonify(website.to_json())
+    except IntegrityError:
+        return 'Already created', 400
+
+@app.route('/websites/', methods=['GET'])
+def get_websites():
+    """Return a user's registered websites."""
+    user_email = request.args.get('email', None)
+    user_github_token = request.args.get('github_api_token', None)
+    if not user_email or not user_github_token:
+        return 'Need to pass email and github_api_token', 403
+
+    try:
+        user = db.session.query(User).filter_by(email=user_email).one()
+    except NoResultFound:
+        return 'User not found', 404
+
+    if user.github_api_token != user_github_token:
+        return 'Authentication data did not match', 403
+
+    websites = db.session.query(Website).join(Website.owner).filter_by(id=user.id).all()
+
+    return jsonify({
+        'length': len(websites),
+        'data': [
+            website.to_json() for website in websites
+        ]
+    })
 
 @app.route('/oauth')
 def oauth():
