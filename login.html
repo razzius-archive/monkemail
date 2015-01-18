@@ -84,7 +84,7 @@
             });
         }
         $(function() {
-            var email = getURLParameter('user_email');
+            var email = getURLParameter('user_email').replace('%40', '@');
             $.cookie('email', email);
             var token = getURLParameter('github_api_token');
             $.cookie('github_api_token', token);
