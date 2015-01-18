@@ -36,7 +36,9 @@
         #submit:hover {
             background-color: #eee;
         }
-
+        #sites {
+            font-size: 24px;
+        }
         #message {
 
         }
@@ -50,7 +52,8 @@
             <div id="postman"></div>
             <h2>Your Sites</h2>
             <div id="sites"></div>
-            <input id="new_website">
+            <input id="new_website" placeholder="website address">
+            <input id="email" placeholder="contact email">
             <input id="submit" value="Add new site" type="submit">
             <h3 id="message"></h3>
         </div>
@@ -73,13 +76,15 @@
             var url = 'http://api.monkemail.me/websites/?';
             url = url + 'email=' + $.cookie('email');
             url = url + '&github_api_token=' + $.cookie('github_api_token');
-            $.getJSON(url, function(data) {
-                $('#sites').append('<p>hi</p>');
-                debugger;
+            $.getJSON(url, function(json) {
+                json.data.forEach(function(website) {
+                    var html = '<a href=' + website.url + '>' + website.url + '</a> - ' + website.contact_email + '<br>';
+                    $('#sites').append(html);
+                });
             });
         }
         $(function() {
-            var email = getURLParameter('email');
+            var email = getURLParameter('user_email');
             $.cookie('email', email);
             var token = getURLParameter('github_api_token');
             $.cookie('github_api_token', token);

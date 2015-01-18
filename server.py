@@ -105,19 +105,6 @@ def test():
 @app.route('/contact/', methods=['POST'])
 def send_contact():
     request_data = request.get_json()
-    user_email = request_data.get('email', None)
-    user_github_token = request_data.get('github_api_token', None)
-    if not user_email or not user_github_token:
-        return 'Need to pass email and github_api_token', 403
-
-    try:
-        user = db.session.query(User).filter_by(email=user_email).one()
-    except NoResultFound:
-        return 'User not found', 404
-
-    if user.github_api_token != user_github_token:
-        return 'Authentication data did not match', 403
-
     content = request_data['content']
     from_email = request_data['from_email']
     website_url = request_data['website_url']
@@ -134,9 +121,15 @@ def send_contact():
         'message': 'success'
     })
 
-@app.route('/websites/', methods=['POST'])
-def create_website():
+@app.route('/websites/', methods=['GET', 'POST'])
+def websites():
     """Create a website for integrating monkemail."""
+    if request.method == 'POST':
+        return create_website(request)
+    else:
+        return get_websites(request)
+
+def create_website(request):
     request_data = request.get_json()
     user_email = request_data.get('email', None)
     user_github_token = request_data.get('github_api_token', None)
@@ -168,7 +161,6 @@ def create_website():
         print(e)
         return 'Already created', 400
 
-@app.route('/websites/', methods=['GET'])
 def get_websites():
     """Return a user's registered websites."""
     user_email = request.args.get('email', None)
@@ -242,4 +234,4 @@ def initdb():
     db.create_all()
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', debug=True, port=int(os.environ.get('PORT', 5000)))
+    app.run('0.0.0.0', port=int(os.environ.get('PORT', 5000)))
