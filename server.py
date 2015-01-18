@@ -28,7 +28,7 @@ GITHUB_OAUTH_ENDPOINT = 'https://github.com/login/oauth/access_token'
 app = Flask('Monkemail')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 
-cors = CORS(app)
+CORS(app, allow_headers='Content-Type')
 
 
 ### Database Bizness ###
