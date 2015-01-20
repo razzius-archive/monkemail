@@ -1,0 +1,79 @@
+.monkemail {
+    font-family: helvetica;
+    text-align: left;
+}
+#monkemail_popup {
+    position: absolute;
+    left: 30%;
+    top: 15%;
+    width: 40%;
+    border-radius: 2%;
+    background-color: white;
+    box-shadow: 0px 3px 30px #888888;
+    z-index: 99999;
+}
+#monkemail_header {
+    padding: 15px;
+    font-weight: lighter;
+}
+#monkemail_title {
+    margin: 0px 0px 0px 0px;
+    float: left;
+    font-weight: lighter;
+}
+#monkemail_body {
+    margin-top: 20px;
+    padding: 18px;
+    border-top: 1px solid gray;
+    font-weight: lighter;
+}
+#monkemail_close_button {
+    float: right;
+    cursor: pointer;
+    font-size: 21px;
+    font-family: helvetica;
+}
+.monkemail_prompt {
+    font-weight: lighter;
+    margin-bottom: 0px;
+}
+#monkemail_email_input, #monkemail_message {
+    margin-right: 18px;
+    font-size: 18px;
+    padding: 8px;
+    width: 95%;
+    outline: none;
+}
+#monkemail_message {
+    height: 200px;
+}
+
+#monkemail_submit {
+    cursor: pointer;
+    height: 35px;
+    line-height: 35px;
+    padding: 10px;
+    border: 1px solid gray;
+    margin-top: 50px;
+    line-height: 50px;
+}
+#monkemail_submit:hover {
+    background-color: #eee;
+}
+#monkemail_overlay {
+    position: fixed;
+
+    /* color with alpha channel */
+    background-color: rgba(0, 0, 0, 0.3); /* 0.7 = 70% opacity */
+
+    /* stretch to screen edges */
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 100;
+}
+#disqus_thread {
+    padding-left: 10%;
+    width: 80%;
+}

@@ -17,6 +17,7 @@ from github import Github
 from mandrill import Mandrill
 
 
+### Config
 MANDRILL_API_KEY = os.environ.get('MANDRILL_API_KEY')
 mandrill_client = Mandrill(MANDRILL_API_KEY)
 
@@ -25,7 +26,7 @@ GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET')
 
 GITHUB_OAUTH_ENDPOINT = 'https://github.com/login/oauth/access_token'
 
-app = Flask('Monkemail')
+app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 
 CORS(app, allow_headers='Content-Type')
@@ -78,6 +79,7 @@ class Website(db.Model, BaseMixin):
         }
 
 
+### Helper methods ###
 def get_primary_github_email(github_client):
     """Get a Github user's primary email."""
     user_emails = github_client.get_user().get_emails()
@@ -89,18 +91,24 @@ def get_primary_github_email(github_client):
     # Return the first email if none are primary
     return user_emails[0]['email']
 
+
 def send_email(to_email, from_email, content):
+    """Send an email using Mandrill."""
     message = {
         'from_email': from_email,
         'to': [{'email': to_email}],
-        'html': content
+        'html': content,
+        'subject': '{} left you a message'.format(from_email)
     }
     mandrill_client.messages.send(message)
 
+
+### API ###
 @app.route('/')
 def test():
     """Endpoint to see if the service is working."""
     return 'success'
+
 
 @app.route('/contact/', methods=['POST'])
 def send_contact():
@@ -121,20 +129,22 @@ def send_contact():
         'message': 'success'
     })
 
+
 @app.route('/websites/', methods=['GET', 'POST'])
 def websites():
-    """Create a website for integrating monkemail."""
+    """Create or look up a website for integrating monkemail."""
     if request.method == 'POST':
         return create_website(request)
     else:
         return get_websites(request)
+
 
 def create_website(request):
     request_data = request.get_json()
     user_email = request_data.get('email', None)
     user_github_token = request_data.get('github_api_token', None)
     if not user_email or not user_github_token:
-        return 'Need to pass email and github_api_token', 403
+        return 'Need to pass email and github_api_token', 400
 
     try:
         user = db.session.query(User).filter_by(email=user_email).one()
@@ -142,7 +152,7 @@ def create_website(request):
         return 'User not found', 404
 
     if user.github_api_token != user_github_token:
-        return 'Authentication data did not match', 403
+        return 'Authentication data did not match', 401
 
     website_url = request_data.get('url', None)
     if not website_url:
@@ -157,16 +167,16 @@ def create_website(request):
     try:
         db.session.commit()
         return jsonify(website.to_json())
-    except IntegrityError as e:
-        print(e)
+    except IntegrityError:
         return 'Already created', 400
+
 
 def get_websites(request):
     """Return a user's registered websites."""
     user_email = request.args.get('email', None)
     user_github_token = request.args.get('github_api_token', None)
     if not user_email or not user_github_token:
-        return 'Need to pass email and github_api_token', 403
+        return 'Need to pass email and github_api_token', 400
 
     try:
         user = db.session.query(User).filter_by(email=user_email).one()
@@ -174,7 +184,7 @@ def get_websites(request):
         return 'User not found', 404
 
     if user.github_api_token != user_github_token:
-        return 'Authentication data did not match', 403
+        return 'Authentication data did not match', 401
 
     websites = db.session.query(Website).join(Website.owner).filter_by(id=user.id).all()
 
@@ -184,6 +194,7 @@ def get_websites(request):
             website.to_json() for website in websites
         ]
     })
+
 
 @app.route('/oauth')
 def oauth():
@@ -206,7 +217,6 @@ def oauth():
     token = credentials['access_token']
 
     # Now that we have their token, we can instantiate a Github client
-
     github = Github(token)
     user_email = get_primary_github_email(github)
 
@@ -229,9 +239,12 @@ def oauth():
 
     return redirect(redirect_url)
 
+
+### Command-line commands ###
 @app.cli.command()
 def initdb():
     db.create_all()
+
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=int(os.environ.get('PORT', 5000)))

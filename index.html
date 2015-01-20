@@ -4,87 +4,7 @@
     <title>Monkemail :: Simple Email Integration</title>
     <link href='http://fonts.googleapis.com/css?family=EB+Garamond' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="assets/style.css">
-    <style type="text/css">
-        .monkemail {
-            font-family: helvetica;
-            text-align: left;
-        }
-        #monkemail_popup {
-            position: absolute;
-            left: 30%;
-            top: 15%;
-            width: 40%;
-            border-radius: 2%;
-            background-color: white;
-            box-shadow: 0px 3px 30px #888888;
-            z-index: 99999;
-        }
-        #monkemail_header {
-            padding: 15px;
-            font-weight: lighter;
-        }
-        #monkemail_title {
-            margin: 0px 0px 0px 0px;
-            float: left;
-            font-weight: lighter;
-        }
-        #monkemail_body {
-            margin-top: 20px;
-            padding: 18px;
-            border-top: 1px solid gray;
-            font-weight: lighter;
-        }
-        #monkemail_close_button {
-            float: right;
-            cursor: pointer;
-            font-size: 21px;
-            font-family: helvetica;
-        }
-        .monkemail_prompt {
-            font-weight: lighter;
-            margin-bottom: 0px;
-        }
-        #monkemail_email_input, #monkemail_message {
-            margin-right: 18px;
-            font-size: 18px;
-            padding: 8px;
-            width: 95%;
-            outline: none;
-        }
-        #monkemail_message {
-            height: 200px;
-        }
-
-        #monkemail_submit {
-            cursor: pointer;
-            height: 35px;
-            line-height: 35px;
-            padding: 10px;
-            border: 1px solid gray;
-            margin-top: 50px;
-            line-height: 50px;
-        }
-        #monkemail_submit:hover {
-            background-color: #eee;
-        }
-        #monkemail_overlay {
-            position: fixed;
-
-            /* color with alpha channel */
-            background-color: rgba(0, 0, 0, 0.3); /* 0.7 = 70% opacity */
-
-            /* stretch to screen edges */
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            z-index: 100;
-        }
-        #disqus_thread {
-            padding-left: 10%;
-            width: 80%;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="assets/monkemail.css">
 </head>
 <body>
     <div id="wrapper">
@@ -93,9 +13,7 @@
             <h1>Monkemail</h1>
             <h2>Embed email interactivity.&nbsp;
                 <a id="monkemail_contact" href="#">Demo Contact</a>
-<!--                 &middot;
-                <a href="#">Demo Share</a>
- -->            </h2>
+                </h2>
             <div>
             <p>Monkemail helps you embed friendly email forms. 2 lines of code and $0.</p>
             </div>
@@ -119,69 +37,7 @@
             Made By <a href="http://razzi.abuissa.net">Razzi</a> For Utility And To Win The Mailchimp API Prize
         </div>
     </div>
-
-
     <script type="text/javascript" src="assets/github_button.js"></script>
-
-    <script type="text/javascript">
-        var monke_dialog = document.createElement('div');
-        var clearPopup = function(){
-            var overlay = document.getElementById('monkemail_overlay');
-            overlay.parentNode.removeChild(overlay);
-            var popup = document.getElementById('monkemail_popup');
-            popup.parentNode.removeChild(popup);
-        };
-
-        var send_email = function() {
-
-            var from_email = document.getElementById('monkemail_email_input').value;
-            var content = document.getElementById('monkemail_message').value;
-
-            var payload = {
-                from_email: from_email,
-                content: content,
-                website_url: window.location.host
-            };
-
-            var request = new XMLHttpRequest();
-            request.open('POST', 'http://api.monkemail.me/contact/', true);
-            request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            var resp = request.send(JSON.stringify(payload));
-            clearPopup();
-        };
-
-        var showPopup = function() {
-            var overlay = document.createElement('div');
-            overlay.id = 'monkemail_overlay';
-            var body = document.body;
-            body.insertBefore(overlay, body.firstChild);
-            var popup = document.createElement('div');
-            popup.id = 'monkemail_popup';
-            popup.className = 'monkemail';
-            popup.innerHTML =
-                '<div id="monkemail_header">' +
-                '    <div id="monkemail_close_button">x</div>' +
-                '    <h2 id="monkemail_title">Contact us</h2>' +
-                '</div>' +
-                '<div id="monkemail_body">' +
-                '    <form class="monkemail">' +
-                '        <h3 class="monkemail_prompt">Your Email</h3>' +
-                '        <input id="monkemail_email_input" type="email">' +
-                '        <h3 class="monkemail_prompt">Message</h3>' +
-                '        <textarea id="monkemail_message"></textarea>' +
-                '        <span id="monkemail_submit">Submit</span>' +
-                '    </form>' +
-                '</div>';
-
-            body.appendChild(popup);
-            var close_button = document.getElementById('monkemail_close_button');
-            close_button.addEventListener('click', clearPopup);
-            overlay.addEventListener('click', clearPopup);
-            var submit = document.getElementById('monkemail_submit');
-            submit.addEventListener('click', send_email);
-        };
-
-        document.getElementById('monkemail_contact').addEventListener('click', showPopup);
-    </script>
+    <script type="text/javascript" src="assets/monkemail.js"></script>
 </body>
 </html>
